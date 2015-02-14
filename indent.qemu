@@ -1,0 +1,76 @@
+#!/bin/bash
+
+indent -bap -br -ce -cdw -cli0 -bls -blf -npcs -ncs -nut -lp -i4 -npsl $@
+
+# -bap, --blank-lines-after-declarations
+# void foo()
+# {
+# }
+# 		<--- Blank lines here. -nbap otherwise.
+# void bar()
+# {
+# }
+
+# -br, --braces-on-if-line
+# -ce, --cuddle-else
+# if (x > 0) {	<--- -br
+# } else {	<--- -ce
+# }
+#
+# if (x > 0)
+# {		<--- -bl
+# }
+# else		<--- -nce
+# {
+# }
+
+# -cdw, -cuddle-do-while
+# do {
+# } while (0);	<--- -cdw
+#
+# do {
+# }
+# while (0);	<--- -ncdw
+
+# -cliN, --case-indentationN
+# switch (i) {
+# case 0:	<--- -cli0
+# }
+#
+# switch (i) {
+#   case 0:	<--- -cli2
+# }
+
+# -bls, --braces-after-struct-decl-line
+# struct
+# {		<--- -bls
+# }
+#
+# struct {	<--- -brs, --braces-on-struct-decl-line
+# }
+
+# -blf, --braces-after-func-def-line
+# int foo()
+# { 		<--- -blf
+# }
+#
+# int foo() {	<--- -brf, --braces-on-func-def-line
+# }
+
+# -npcs, --no-space-after-function-call-names
+# puts("hello");	<--- -npcs
+# puts ("hello");	<--- -pcs
+
+# -ncs, --no-space-after-casts
+# (Object *)malloc(sizeof(Object))	<--- -ncs
+# (Object *) malloc(sizeof(Object))	<--- -cs
+
+# -npsl, --dont-break-procedure-type
+# void foo()	<--- -npsl
+# {
+# }
+#
+# void		<--- -psl
+# foo()
+# {
+# }
