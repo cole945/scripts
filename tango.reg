@@ -1,6 +1,7 @@
 Windows Registry Editor Version 5.00
 
 [HKEY_CURRENT_USER\Software\SimonTatham\PuTTY\Sessions\tango]
+"Beep"=dword:00000000
 "Colour0"="187,187,187"
 "Colour1"="255,255,255"
 "Colour2"="8,8,8"
