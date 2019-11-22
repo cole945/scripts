@@ -80,12 +80,17 @@ endif
 "
 " Highlight Text
 " Colors (runtime syntax/colortest.vim)
-highlight HlMatch1 ctermbg=DarkCyan ctermfg=white
-highlight HlMatch2 ctermbg=DarkGreen ctermfg=white
-highlight HlMatch3 ctermbg=DarkRed ctermfg=white
-highlight HlMatch4 ctermbg=DarkMagenta ctermfg=white
-highlight HlMatch5 ctermbg=White ctermfg=black
-highlight HlMatch6 ctermbg=DarkBlue ctermfg=white
+highlight HlMatch1 ctermbg=DarkCyan     ctermfg=white
+highlight HlMatch2 ctermbg=DarkGreen    ctermfg=white
+highlight HlMatch3 ctermbg=DarkBlue     ctermfg=white
+highlight HlMatch4 ctermbg=DarkMagenta  ctermfg=white
+highlight HlMatch5 ctermbg=White        ctermfg=black
+highlight HlMatch6 ctermbg=DarkRed      ctermfg=white
+
+highlight HlMatch7 ctermbg=Cyan     ctermfg=Red
+highlight HlMatch8 ctermbg=LightGreen    ctermfg=Red
+highlight HlMatch9 ctermbg=White        ctermfg=Red
+highlight HlMatch0 ctermbg=Yellow       ctermfg=Red
 " Function for high-lighting text.
 function! HlMatch(group, pat)
   if exists("w:{a:group}")
@@ -95,41 +100,19 @@ function! HlMatch(group, pat)
     let w:{a:group}=matchadd(a:group, a:pat, 2)
   endif
 endfunction
-" Highlight selected text in visual mode.
-vmap <silent> <C-h>1   y:call HlMatch ('HlMatch1', '<C-R>0')<CR>
-vmap <silent> <C-h>2   y:call HlMatch ('HlMatch2', '<C-R>0')<CR>
-vmap <silent> <C-h>3   y:call HlMatch ('HlMatch3', '<C-R>0')<CR>
-vmap <silent> <C-h>4   y:call HlMatch ('HlMatch4', '<C-R>0')<CR>
-vmap <silent> <C-h>5   y:call HlMatch ('HlMatch5', '<C-R>0')<CR>
-vmap <silent> <C-h>6   y:call HlMatch ('HlMatch6', '<C-R>0')<CR>
-" Highlight text under the cursor.
-nmap <silent> <C-h>1   :call HlMatch ('HlMatch1', '\<<C-R>=expand("<cword>")<CR>\>')<CR>
-nmap <silent> <C-h>2   :call HlMatch ('HlMatch2', '\<<C-R>=expand("<cword>")<CR>\>')<CR>
-nmap <silent> <C-h>3   :call HlMatch ('HlMatch3', '\<<C-R>=expand("<cword>")<CR>\>')<CR>
-nmap <silent> <C-h>4   :call HlMatch ('HlMatch4', '\<<C-R>=expand("<cword>")<CR>\>')<CR>
-nmap <silent> <C-h>5   :call HlMatch ('HlMatch5', '\<<C-R>=expand("<cword>")<CR>\>')<CR>
-nmap <silent> <C-h>6   :call HlMatch ('HlMatch6', '\<<C-R>=expand("<cword>")<CR>\>')<CR>
-" Highlight text (not whole word) under the cursor.
-nmap <silent> g<C-h>1  :call HlMatch ('HlMatch1', '<C-R>=expand("<cword>")<CR>')<CR>
-nmap <silent> g<C-h>2  :call HlMatch ('HlMatch2', '<C-R>=expand("<cword>")<CR>')<CR>
-nmap <silent> g<C-h>3  :call HlMatch ('HlMatch3', '<C-R>=expand("<cword>")<CR>')<CR>
-nmap <silent> g<C-h>4  :call HlMatch ('HlMatch4', '<C-R>=expand("<cword>")<CR>')<CR>
-nmap <silent> g<C-h>5  :call HlMatch ('HlMatch5', '<C-R>=expand("<cword>")<CR>')<CR>
-nmap <silent> g<C-h>6  :call HlMatch ('HlMatch6', '<C-R>=expand("<cword>")<CR>')<CR>
-" Highlight last search
-"map <silent> <C-h>/   y:call HlMatch ('HlMatch1', '<C-R>/')<CR>
-"map <silent> 2<C-h>/  y:call HlMatch ('HlMatch2', '<C-R>/')<CR>
-"map <silent> 3<C-h>/  y:call HlMatch ('HlMatch3', '<C-R>/')<CR>
-"map <silent> 4<C-h>/  y:call HlMatch ('HlMatch4', '<C-R>/')<CR>
-"map <silent> 5<C-h>/  y:call HlMatch ('HlMatch5', '<C-R>/')<CR>
-"map <silent> 6<C-h>/  y:call HlMatch ('HlMatch6', '<C-R>/')<CR>
-" Clear highlight.
-nmap <silent> <ESC><C-h>1 :call HlMatch ('HlMatch1', '')<CR>
-nmap <silent> <ESC><C-h>2 :call HlMatch ('HlMatch2', '')<CR>
-nmap <silent> <ESC><C-h>3 :call HlMatch ('HlMatch3', '')<CR>
-nmap <silent> <ESC><C-h>4 :call HlMatch ('HlMatch4', '')<CR>
-nmap <silent> <ESC><C-h>5 :call HlMatch ('HlMatch5', '')<CR>
-nmap <silent> <ESC><C-h>6 :call HlMatch ('HlMatch6', '')<CR>
+
+for i in [1, 2, 3, 4, 5, 6, 7, 8, 9, 0]
+    " Highlight selected text in visual mode.
+    execute 'vmap <silent> <C-h>'. i .'       y:call HlMatch ("HlMatch' . i . '", "<C-R>0")<CR>'
+    " Highlight text under the cursor.
+    execute 'nmap <silent> <C-h>' . i . '      :call HlMatch ("HlMatch' . i . '", ''\<<C-R>=expand("<cword>")<CR>\>'')<CR>'
+    " Highlight text (not whole word) under the cursor.
+    execute 'nmap <silent> g<C-h>' . i . '     :call HlMatch ("HlMatch' . i . '", ''<C-R>=expand("<cword>")<CR>'')<CR>'
+    " Highlight last search
+    "map <silent> <C-h>/   y:call HlMatch ('HlMatch1', '<C-R>/')<CR>
+    " Clear highlight.
+    execute 'nmap <silent> <ESC><C-h>' . i . ' :call HlMatch ("HlMatch' . i . '", '''')<CR>'
+endfor
 nmap <silent> <ESC><C-h>* :call clearmatches ()<CR>
 
 "
@@ -139,15 +122,9 @@ hi TabLineFill ctermfg=Black ctermbg=Black
 hi TabLine ctermfg=White ctermbg=Black
 hi TabLineSel ctermfg=Black ctermbg=Yellow
 " Here <ESC>1 actually means <M-1>.
-map <ESC>1 1gt
-map <ESC>2 2gt
-map <ESC>3 3gt
-map <ESC>4 4gt
-map <ESC>5 5gt
-map <ESC>6 6gt
-map <ESC>7 7gt
-map <ESC>8 8gt
-map <ESC>9 9gt
+for i in [1, 2, 3, 4, 5, 6, 7 ,8, 9]
+  execute 'map <ESC>' . i . ' ' . i . 'gt'
+endfor
 
 "
 " Copy large buffer to temp file.
@@ -222,3 +199,4 @@ augroup END
 
 
 au BufRead,BufNewFile *.ll set filetype=llvm
+set visualbell
