@@ -7,18 +7,30 @@ function encode {
     [int]$scale = 720,
     [string]$codec = "libx264",
     [string]$vf,
-    [int]$crf = 23,
+    [int]$crf = 26,
     [string[]]$copy = @(),
     [string]$preset = "medium",
-    [switch]$smartblur
+    [switch]$smartblur,
+    [switch]$brighten
     )
 
   if (-Not (Test-Path "$file.mp4")) {
       Write-Host "Missing $file"
       return
   }
-  
-  $ARGS = "-n -i $file.mp4"
+
+  if (Test-Path "C:\Program Files\ffmpeg\bin" -PathType Container) {
+    $FFMPEG_BIN = "C:\Program Files\ffmpeg\bin";
+  } elseif (Test-Path "C:\Program Files (x86)\ffmpeg\bin" -PathType Container) {
+    $FFMPEG_BIN = "C:\Program Files (x86)\ffmpeg\bin";
+  } else {
+    Write-Host "FFmpeg not found";
+    return 1
+  }
+
+  $ARGS = ""
+  $ARGS += " -c:v h264_cuvid"
+  $ARGS += " -n -i $file.mp4"
   if (($t -ne "") -or ($ss -ne "")) {
       if ($ss -match '^(\d*):(\d+)$') {
           $ss = [int]$Matches[1] * 60 + [int]$Matches[2];
@@ -47,7 +59,7 @@ function encode {
       Remove-Item $ofile
     }
   }
-  
+
   $ARGS += " -c:v $codec"
   $ARGS += " -preset $preset"
   $ARGS += " -crf $crf"
@@ -57,13 +69,16 @@ function encode {
   if ($smartblur) {
       $vf = "smartblur=lr=2.00:ls=-0.90:lt=-5.0:cr=0.5:cs=1.0:ct=1.5, $vf"
   }
+  if ($brighten) {
+      $vf = "colorlevels=rimax=0.902:gimax=0.902:bimax=0.902, $vf"
+  }
   $ARGS += " -an -vf `"scale=-1:$scale, $vf ass=$file.ssa`""
-  
+
   $ARGS += " $ofile"
 
-  
+
   Write-Host "Encode ${ofile}: $ARGS"
-  Start-Process -FilePath "C:\Program Files (x86)\ffmpeg\bin\ffmpeg.exe" `
+  Start-Process -FilePath "${FFMPEG_BIN}\ffmpeg.exe" `
       -NoNewWindow -Wait `
       -ArgumentList $ARGS
 
