@@ -59,11 +59,18 @@ function! GnuIndent()
   setlocal cinoptions=>4,n-2,{2,^-2,:2,=2,g0,h2,p5,t0,+2,(0,u0,w1,m1
   setlocal shiftwidth=2
   setlocal tabstop=8
+  map <F9> :!indent<CR>V`]=
 endfunction
-au FileType c,cpp,h	call GnuIndent()
+function! LLVMIndent()
+  set cinoptions=:0,g0,(0,Ws,l1
+  set softtabstop=2
+  set shiftwidth=2
+  set expandtab
+  map <F9> :!~/build/build-llvm/bin/clang-format<CR>V`]=
+endfunction
+au FileType c,cpp,cc,h	call LLVMIndent()
 " Use external "indent" for gnu coding style,
 " and then apply vim-indent "=" to origin selection "V`]"
-map <F9> :!indent<CR>V`]=
 
 "
 " Hight 80c
