@@ -6,7 +6,7 @@ set nowrap
 set tabstop=8
 set shiftwidth=4
 set viminfo='100,s10,h
-" set expandtab
+set expandtab
 
 " Tell vim to remember certain things when we exit
 "  '10  :  marks will be remembered for up to 10 previously edited files
@@ -25,12 +25,28 @@ au BufNewFile,BufRead *.flex		set filetype=lex
 "
 " Highlight incorrent whitespace (GnuStyle)
 "
-highlight ExtraWhitespace ctermbg=red guibg=red
+highlight LLVMStyleChecker ctermbg=red guibg=red
 function! HlFormat()
   if !exists("w:HlWhitespace_on") || w:HlWhitespace_on == 0
-    match ExtraWhitespace /\s\+$\| \+\ze\t\| \{8,\}\|\/\/\|,[^ \t]\|\s,/
+    " GNU space checker
+    " match GNUExtraWhitespace /\s\+$\| \+\ze\t\| \{8,\}\|\/\/\|,[^ \t]\|\s,/
     " Check language spelling
     setlocal spell spelllang=en_us
+
+    " LLVM space checker
+    let LLVMPatterns = []
+    call add(LLVMPatterns, '\s\+$')                                     " no trailing whitespace
+    call add(LLVMPatterns, '\t')                                        " no TAB
+    call add(LLVMPatterns, '\s,')                                       " no space before ','      not (a , b)
+    call add(LLVMPatterns, ',[^ ]')                                     " single space after ','   not (a,b)
+    call add(LLVMPatterns, '\(,\)\@<= \{2,\}')                          " single space after ','   not (a,   b)
+    call add(LLVMPatterns, '\((\)\@<= \+')                              " no space after '('       not ( a + b)
+    call add(LLVMPatterns, ' \+\()\)\@=')                               " no space before ')'.     not (a + b )
+    call add(LLVMPatterns, '^\s*{')                                     " '{' should be at previous line  if (...) { not at the new line
+    call add(LLVMPatterns, '[^ ]\zs\s\{2,\}\ze')                        " no multiple space in the middle (except for align)
+    call add(LLVMPatterns, '[^ ]{')                                     " missing space before '{'
+    call add(LLVMPatterns, '\<\(if\|while\|else\|try\|catch\)\((\|{\)') " missing space before after keywords
+    execut 'match LLVMStyleChecker /' . join(LLVMPatterns, '\|') . '/'
 
     " Don't show the message when startup and loading .vimrc.
     if exists("w:HlWhitespace_on")
